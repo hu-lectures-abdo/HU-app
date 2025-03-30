@@ -23,6 +23,7 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'dart:io'; // Detect platform
 import 'firebase_options.dart';
 import 'api/firebase_api.dart';
 
@@ -31,7 +32,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   await FirebaseApi().initNotifications();
   
   runApp(const MyApp());
@@ -58,19 +58,19 @@ class WebViewScreen extends StatefulWidget {
 
 class _WebViewScreenState extends State<WebViewScreen> {
   late final WebViewController _controller;
-  bool _isLoading = true; // متغير لتحديد حالة التحميل
+  bool _isLoading = true; // Loading state
 
   @override
   void initState() {
     super.initState();
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
+      ..setBackgroundColor(const Color(0xFFFFFFFF)) // White background
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (String url) {
             setState(() {
-              _isLoading = false; // إخفاء شاشة التحميل بعد تحميل الصفحة
+              _isLoading = false; // Hide loader when page loads
             });
           },
         ),
@@ -91,19 +91,28 @@ class _WebViewScreenState extends State<WebViewScreen> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
+        appBar: Platform.isIOS
+            ? const CupertinoNavigationBar(
+                middle: Text('HU LECTURES'),
+              )
+            : AppBar(
+                title: const Text('HU LECTURES'),
+                centerTitle: true,
+                elevation: 4,
+              ),
         body: Stack(
           children: [
-            WebViewWidget(controller: _controller), // عرض WebView
-            if (_isLoading) // عرض شاشة التحميل فقط إذا كانت الصفحة لا تزال تُحمّل
+            WebViewWidget(controller: _controller), // WebView content
+            if (_isLoading) // Show loading screen
               Container(
-                color: Colors.white, // لون خلفية شاشة التحميل
+                color: Colors.white,
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Image.asset('assets/android-chrome-512x512-99.png', width: 150), // اللوجو
+                      Image.asset('assets/android-chrome-512x512-99.png', width: 120), // Logo
                       const SizedBox(height: 20),
-                      const CircularProgressIndicator(), // مؤشر التحميل
+                      const CircularProgressIndicator(), // Loading indicator
                     ],
                   ),
                 ),

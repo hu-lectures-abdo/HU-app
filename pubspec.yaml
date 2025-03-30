@@ -30,6 +30,9 @@ dev_dependencies:
   # Recommended linting package
   flutter_lints: ^5.0.0
 
+  # Add launcher icons support
+  flutter_launcher_icons: ^0.13.1
+
 # Flutter-specific configurations
 flutter:
   uses-material-design: true
@@ -37,3 +40,10 @@ flutter:
   # Add assets folder for images (logo)
   assets:
     - assets/android-chrome-512x512-99.png
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/android-chrome-512x512-99.png" # Use this file as app icon
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/android-chrome-512x512-99.png"
