@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: WebViewScreen(),
     );
-  }
+  } 
 }
 
 class WebViewScreen extends StatefulWidget {
