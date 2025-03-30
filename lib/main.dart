@@ -20,10 +20,11 @@
 //     );
 //   }
 // }
+import 'dart:io'; // Detect platform
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'dart:io'; // Detect platform
 import 'firebase_options.dart';
 import 'api/firebase_api.dart';
 
@@ -66,12 +67,14 @@ class _WebViewScreenState extends State<WebViewScreen> {
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFFFFFFF)) // White background
+      ..enableZoom(false) // Disable zoom for a better experience
       ..setNavigationDelegate(
         NavigationDelegate(
-          onPageFinished: (String url) {
-            setState(() {
-              _isLoading = false; // Hide loader when page loads
-            });
+          onPageStarted: (_) {
+            setState(() => _isLoading = true); // Show loader when page reloads
+          },
+          onPageFinished: (_) {
+            setState(() => _isLoading = false); // Hide loader after load
           },
         ),
       )
@@ -93,12 +96,13 @@ class _WebViewScreenState extends State<WebViewScreen> {
       child: Scaffold(
         appBar: Platform.isIOS
             ? const CupertinoNavigationBar(
-                middle: Text('HU LECTURES'),
+                middle: Text('HU LECTURES', style: TextStyle(fontSize: 18)),
               )
             : AppBar(
                 title: const Text('HU LECTURES'),
                 centerTitle: true,
                 elevation: 4,
+                backgroundColor: Colors.blueAccent,
               ),
         body: Stack(
           children: [
