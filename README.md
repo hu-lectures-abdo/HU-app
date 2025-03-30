@@ -1,4 +1,4 @@
-# hulectures
+# HU LECTURES
 
 A new Flutter project.
 
