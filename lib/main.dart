@@ -87,7 +87,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
       return false;
     }
     return true;
-  }
+  } 
 
   @override
   Widget build(BuildContext context) {
