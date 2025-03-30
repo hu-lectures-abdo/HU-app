@@ -33,3 +33,7 @@ dev_dependencies:
 # Flutter-specific configurations
 flutter:
   uses-material-design: true
+
+  # Add assets folder for images (logo)
+  assets:
+    - assets/android-chrome-512x512-99.png

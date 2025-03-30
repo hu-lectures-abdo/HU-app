@@ -1,0 +1,37 @@
+# Uncomment this line to define a global platform for your project
+platform :ios, '13.0'
+
+# Ignore all warnings from CocoaPods
+inhibit_all_warnings!
+
+# Define your project
+project 'Runner', {
+  'Debug' => :debug,
+  'Profile' => :release,
+  'Release' => :release,
+}
+
+# Flutter configuration
+flutter_installation_mode = ENV['FLUTTER_INSTALLATION_MODE'] || 'release'
+
+# CocoaPods analytics
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+# Use frameworks instead of static libraries
+use_frameworks!
+
+# Flutter pod helper script
+load File.join(ENV['FLUTTER_ROOT'], 'packages', 'flutter_tools', 'bin', 'pod_helper.rb')
+
+target 'Runner' do
+  use_frameworks!
+  use_modular_headers!
+
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
+  # Firebase dependencies (optional, if using Firebase)
+  pod 'Firebase/Core'
+  pod 'Firebase/Messaging'
+
+  # Other dependencies can be added here
+end

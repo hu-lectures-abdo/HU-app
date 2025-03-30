@@ -27,12 +27,12 @@ import 'firebase_options.dart';
 import 'api/firebase_api.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // لضمان تهيئة Firebase قبل تشغيل التطبيق
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await FirebaseApi().initNotifications(); // ✅ إضافة الـ ;
+  await FirebaseApi().initNotifications();
   
   runApp(const MyApp());
 }
@@ -58,33 +58,58 @@ class WebViewScreen extends StatefulWidget {
 
 class _WebViewScreenState extends State<WebViewScreen> {
   late final WebViewController _controller;
+  bool _isLoading = true; // متغير لتحديد حالة التحميل
 
   @override
   void initState() {
     super.initState();
     _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted) // تفعيل JavaScript
-      ..setBackgroundColor(const Color(0x00000000)) // خلفية شفافة
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (String url) {
-            debugPrint("Page loaded: $url");
+            setState(() {
+              _isLoading = false; // إخفاء شاشة التحميل بعد تحميل الصفحة
+            });
           },
         ),
       )
       ..loadRequest(Uri.parse('https://hu-stu-lectures.vercel.app'));
   }
 
+  Future<bool> _onWillPop() async {
+    if (await _controller.canGoBack()) {
+      _controller.goBack();
+      return false;
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('HU Lectures'),
-        centerTitle: true,
-        elevation: 4,
-      ),
-      body: SafeArea(
-        child: WebViewWidget(controller: _controller),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            WebViewWidget(controller: _controller), // عرض WebView
+            if (_isLoading) // عرض شاشة التحميل فقط إذا كانت الصفحة لا تزال تُحمّل
+              Container(
+                color: Colors.white, // لون خلفية شاشة التحميل
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset('assets/android-chrome-512x512-99.png', width: 150), // اللوجو
+                      const SizedBox(height: 20),
+                      const CircularProgressIndicator(), // مؤشر التحميل
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
